@@ -17,3 +17,6 @@ class CryptoService():
         else:
             arr['spred'] = None
         return arr
+
+    def get_history_price(self, coin, limit):
+        self.crypto_repository.get_history_price(coin, limit)

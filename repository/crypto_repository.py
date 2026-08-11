@@ -1,23 +1,25 @@
 from .base_repository import BaseRepository
-from .db.base_db import BaseDb
-from .api.base_api import BaseApi
+from .api_repository import ApiRepository
+from .db_repository import DbRepository
+from ..model.сoin_model import CoinModel
+
 
 class CryptoRepository(BaseRepository):
-    def __init__(self, source, api_dict: dict[str, BaseApi], db: BaseDb):
-        self.source = source
-        self.api_dict = api_dict
-        self.db = db
+    def __init__(self, api_repository: ApiRepository, db_repository: DbRepository):
+        self.api_repository = api_repository
+        self.db_repository = db_repository
 
     def get_actual_price(self, coin, source):
-        api : BaseApi = self.api_dict[source]
         try:
-            res = api.get_data(coin)
-            for coins in res:
-                self.db.save_cache(coins)
-            return res[-1]
+            res = self.api_repository.get_actual_price(coin, source)
+            if isinstance(res, CoinModel):
+                self.db_repository.db.save_cache(res)
+            else:
+                pass
+            return res
         except Exception as e:
-            print(f"Ошибка api: {e}")
-        return self.db.get_coin_price(coin)
+            print(f"Ошибка получения данных API: {e}")
+            return self.db_repository.get_actual_price(coin, source)
 
     def get_history_price(self, coin, limit=10000):
-        return self.db.get_history_price(coin, limit)
+        return self.db_repository.get_history_price(coin, limit)

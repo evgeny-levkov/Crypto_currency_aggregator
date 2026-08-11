@@ -7,7 +7,7 @@ class BaseDb(ABC):
         self.db = db
 
     @abstractmethod
-    def get_coin_price(self, coin) -> CoinModel:
+    def get_coin_price(self, coin, source) -> CoinModel:
         pass
 
     @abstractmethod

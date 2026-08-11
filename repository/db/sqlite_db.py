@@ -18,7 +18,7 @@ class SqlLiteDb(BaseDb):
             self.cur.execute(f"select * from crypto")
         except Exception as e:
             print(f"Таблицы не существует: {e}")
-            self.cur.execute("create table crypto(id INTEGER PRIMARY KEY AUTOINCREMENT, name Text, price FLOAT, time DATETIME, source TEXT)")
+            self.cur.execute("create table crypto(id INTEGER PRIMARY KEY AUTOINCREMENT, name Text, time DATETIME, price FLOAT, source TEXT)")
 
     def get_history_price(self, coin, limit=10000):
         res =[]
@@ -34,9 +34,9 @@ class SqlLiteDb(BaseDb):
             print(f'Ошибка получения данных: {e}')
         return res
 
-    def get_coin_price(self, coin):
+    def get_coin_price(self, coin, source):
         try:
-            output = self.cur.execute('select * from crypto where name = ? order by time desc limit 1', (coin,)).fetchone()
+            output = self.cur.execute('select * from crypto where name = ? and source = ? order by time desc limit 1', (coin, source)).fetchone()
             if output is not None:
                 return CoinModel(output[1], output[2], output[3], output[4])
             else:
@@ -46,5 +46,5 @@ class SqlLiteDb(BaseDb):
             print(f'Ошибка получения данных: {e}')
 
     def save_cache(self, coin: CoinModel):
-        self.cur.execute('insert into crypto(name, price,time, source) values (?, ?, ?, ?)', (coin.name, coin.price, coin.time, coin.source))
+        self.cur.execute('insert into crypto(name, time, price, source) values (?, ?, ?, ?)', (coin.name, coin.time, coin.price, coin.source))
         self.conn.commit()
