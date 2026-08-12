@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
 from ...model.сoin_model import CoinModel
+from ...model.alert_model import AlertModel
 
 
 class BaseDb(ABC):
@@ -16,4 +17,13 @@ class BaseDb(ABC):
 
     @abstractmethod
     def save_cache(self, coin: CoinModel):
+        pass
+
+    def get_all_alert(self) -> list[AlertModel]:
+        pass
+
+    def delete_alert(self, id):
+        pass
+
+    def add_alert(self, alert: AlertModel):
         pass

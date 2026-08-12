@@ -1,0 +1,27 @@
+from .base_alert import BaseAlert
+from ..model.сoin_model import CoinModel
+import operator
+
+
+class PriceAlert(BaseAlert):
+    def __init__(self, alert_price, coin: str, source, opr):
+        self._operators = {'>': operator.gt, '<':operator.lt, '=': operator.eq}
+        self.alert_price = alert_price
+        self.coin = coin
+        self.source = source
+        self.symbol_opr = opr
+        self.opr = self._operators[opr]
+
+    def check(self, data: dict):
+        try:
+            model = data.get(self.source)
+            if isinstance(model, CoinModel):
+                if model.name == self.coin and self.opr(model.price, self.alert_price):
+                    return True
+                else:
+                    return False
+        except Exception as e:
+            print(f"Ошибка{e}")
+
+    def get_description(self):
+        return f'{self.coin} на бирже {self.source} {self.symbol_opr} чем {self.alert_price}'

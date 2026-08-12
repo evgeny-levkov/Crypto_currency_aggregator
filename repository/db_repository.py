@@ -11,3 +11,12 @@ class DbRepository(BaseRepository):
 
     def get_actual_price(self, coin, source):
         return self.db.get_coin_price(coin, source)
+
+    def get_all_alert(self):
+        return self.db.get_all_alert()
+
+    def add_alert(self, alert):
+        return self.db.add_alert(alert)
+
+    def delete_alert(self, id):
+        return self.db.delete_alert(id)

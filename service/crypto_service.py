@@ -1,5 +1,6 @@
 from ..repository.crypto_repository import CryptoRepository
 from ..model.сoin_model import CoinModel
+from ..model.alert_model import AlertModel
 
 
 class CryptoService():
@@ -19,4 +20,13 @@ class CryptoService():
         return arr
 
     def get_history_price(self, coin, limit):
-        self.crypto_repository.get_history_price(coin, limit)
+        return self.crypto_repository.get_history_price(coin, limit)
+
+    def get_all_alert(self):
+        return self.crypto_repository.get_all_alert()
+
+    def add_alert(self, alert: AlertModel):
+        return self.crypto_repository.add_alert(alert)
+
+    def delete_alert(self, id):
+        return self.crypto_repository.delete_alert(id)

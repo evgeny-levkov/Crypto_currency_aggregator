@@ -23,3 +23,21 @@ class CryptoRepository(BaseRepository):
 
     def get_history_price(self, coin, limit=10000):
         return self.db_repository.get_history_price(coin, limit)
+
+    def get_all_alert(self):
+        try:
+            return self.db_repository.get_all_alert()
+        except Exception as e:
+            print(f'Ошибка: {e}')
+
+    def add_alert(self, alert):
+        try:
+            return self.db_repository.add_alert(alert)
+        except Exception as e:
+                print(f'Ошибка: {e}')
+
+    def delete_alert(self, id):
+        try:
+            return self.db_repository.delete_alert(id)
+        except Exception as e:
+            print(f'Ошибка: {e}')
