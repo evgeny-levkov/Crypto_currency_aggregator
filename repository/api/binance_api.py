@@ -9,6 +9,8 @@ class BinanceApi(BaseApi):
     def __init__(self, end_point = 'https://api.binance.com/api/v3/ticker/price?symbol='):
         super().__init__(end_point=end_point)
 
-    def get_data(self, coin):
-        get_req = requests.get(self.end_point+coin).json()
-        return [CoinModel(name=get_req['symbol'], time=datetime.datetime.now(), price=float(get_req['price']), source='Binance')]
+    def form_string_api(self, coin) -> str:
+        return self.end_point + coin
+
+    def parse_data(self, response, coin):
+        return [CoinModel(name=response['symbol'], time=datetime.datetime.now(), price=float(response['price']), source='Binance')]
