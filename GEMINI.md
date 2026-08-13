@@ -61,3 +61,6 @@ The goal of this project is to build a **Crypto Currency & Exchange Rate Aggrega
 4. **Git Repository Sanitization & Configuration:**
    - Excluded sensitive files and chat logs (`old_chat.md`) from Git tracking, purging history from GitHub using `git commit --amend` and `git push --force`.
    - Setup project-specific `.gitignore` to prevent tracking of local SQLite databases (`*.db`) and dynamic caches.
+5. **API Client Refactoring (Template Method Pattern):**
+   - Extracted common HTTP query execution, JSON extraction, and error handling logic from concrete API classes into the abstract base class `BaseApi`.
+   - Concrete `BinanceApi` and `CoinGekoApi` now only implement URL formatting (`form_string_api`) and response parsing (`parse_data`), achieving strict SRP and clean code.
