@@ -24,7 +24,7 @@ class CryptoViewModel(QObject):
         self.member_alerts = self.crypto_service.get_all_alert()
         self.load_alerts()
 
-    def start_monitoring(self, coin, source, ):
+    def start_monitoring(self, coin, source):
         if self.get_price_thread is None:
             self.get_price_thread = QThread()
             self.get_price_worker = GetPriceWorker(coin, source, self.crypto_service)
