@@ -3,10 +3,10 @@ from PyQt6.QtCore import pyqtSignal, QObject, pyqtSlot
 
 
 class AlertManager(QObject):
-    trigger = pyqtSignal(BaseAlert)
+    trigger = pyqtSignal(BaseAlert, int)
     def __init__(self):
         super().__init__()
-        self.alerts: dict[str, BaseAlert] = {}
+        self.alerts: dict[int, BaseAlert] = {}
 
     def add_alert(self, name, alert: BaseAlert):
         self.alerts[name] = alert
@@ -19,6 +19,6 @@ class AlertManager(QObject):
         for tr in self.alerts:
             if isinstance(self.alerts[tr], BaseAlert) and self.alerts[tr].check(data):
                 worked_trigger.append(tr)
-                self.trigger.emit(self.alerts[tr])
+                self.trigger.emit(self.alerts[tr], tr)
         for trig in worked_trigger:
             self.remove_alert(trig)

@@ -1,8 +1,9 @@
 from .base_alert import BaseAlert
 from ..model.сoin_model import CoinModel
 import operator
+from ..alerts.alert_factory import AlertFactory
 
-
+@AlertFactory.registry_alerts("price")
 class PriceAlert(BaseAlert):
     def __init__(self, alert_price, coin: str, source, opr):
         self._operators = {'>': operator.gt, '<':operator.lt, '=': operator.eq}

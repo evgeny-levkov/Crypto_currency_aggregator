@@ -5,6 +5,8 @@ from ..service.export_service import ExportService
 from PyQt6.QtCore import QThread
 from PyQt6.QtCore import QObject, pyqtSignal
 from ..alerts.base_alert import BaseAlert
+from ..alerts.alert_factory import AlertFactory
+from ..model.alert_model import AlertModel
 
 
 class CryptoViewModel(QObject):
@@ -20,7 +22,8 @@ class CryptoViewModel(QObject):
         self.export_service = export_service
         self.alert_manager = AlertManager()
         self.alert_manager.trigger.connect(self.alert)
-        #self.member_alerts = self.crypto_service.get_all_alert()
+        self.member_alerts = self.crypto_service.get_all_alert()
+        self.load_alerts()
 
     def start_monitoring(self, coin, source, ):
         if self.get_price_thread is None:
@@ -49,8 +52,9 @@ class CryptoViewModel(QObject):
     def stop_monitoring(self):
         self.get_price_worker.stop()
 
-    def alert(self, alert_mes: BaseAlert):
+    def alert(self, alert_mes: BaseAlert, id: int):
         self.trigger_alert.emit(alert_mes.get_description())
+        self.crypto_service.delete_alert(id)
 
     def get_history_data(self, coin, limit):
         self.history_data.emit(self.crypto_service.get_history_price(coin, limit))
@@ -61,3 +65,22 @@ class CryptoViewModel(QObject):
             self.export_res.emit(res)
         elif res is None:
             self.export_res.emit(None)
+
+    def load_alerts(self):
+        if self.member_alerts is not None:
+            for alerts in self.member_alerts:
+                self.alert_manager.add_alert(alerts.id, AlertFactory.give_alerts(alerts.alert_type, alerts.coin, alerts.source, **alerts.alert_params))
+
+    def delete_alert(self, name):
+        try:
+            self.crypto_service.delete_alert(name)
+            self.alert_manager.remove_alert(name)
+        except Exception as e:
+            print(f'Нет такого алёрта:{e}')
+
+    def add_alert(self, alert_type, coin, source, **params):
+        try:
+            id = self.crypto_service.add_alert(AlertModel(alert_type, coin, source, **params))
+            self.alert_manager.add_alert(id, AlertFactory.give_alerts(alert_type, coin, source, **params))
+        except Exception as e:
+            print(f'Ошибка добавления:{e}')

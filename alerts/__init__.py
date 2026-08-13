@@ -1,0 +1,1 @@
+from ..alerts.price_alert import PriceAlert

@@ -2,6 +2,8 @@ from .base_db import BaseDb
 from ...model.сoin_model import CoinModel
 from ...model.alert_model import AlertModel
 import sqlite3
+import json
+
 
 class SqlLiteDb(BaseDb):
     def __init__(self, db):
@@ -16,7 +18,7 @@ class SqlLiteDb(BaseDb):
             print(f"Ошибка подключения к БД: {e}")
 
         try:
-            self.cur.execute("create table if not exists alert(id INTEGER PRIMARY KEY AUTOINCREMENT, alert_price FLOAT, coin TEXT, source TEXT, opr TEXT)")
+            self.cur.execute("create table if not exists alert(id INTEGER PRIMARY KEY AUTOINCREMENT, alert_type TEXT, coin TEXT, source TEXT, params TEXT)")
             self.cur.execute("create table if not exists crypto(id INTEGER PRIMARY KEY AUTOINCREMENT, name Text, time DATETIME, price FLOAT, source TEXT)")
         except Exception as e:
                 print(f"Ошибка создания таблицы: {e}")
@@ -56,7 +58,7 @@ class SqlLiteDb(BaseDb):
             output = self.cur.execute('select * from alert')
             if output is not None:
                 for alerts in output:
-                    res.append(AlertModel(alerts[1], alerts[2], alerts[3], alerts[4], alerts[0]))
+                    res.append(AlertModel(alert_type=alerts[1], coin=alerts[2], source=alerts[3], id=alerts[0], **json.loads(alerts[4])))
             else:
                 print('Нет таких записей')
                 return None
@@ -66,8 +68,8 @@ class SqlLiteDb(BaseDb):
 
     def add_alert(self, alert: AlertModel):
         try:
-            self.cur.execute('insert into alert(alert_price, coin, source, opr) values (?, ?, ?, ?)',
-                             (alert.alert_price, alert.coin, alert.source, alert.opr))
+            self.cur.execute('insert into alert(alert_type, coin, source, params) values (?, ?, ?, ?)',
+                             (alert.alert_type, alert.coin, alert.source, json.dumps(alert.alert_params)))
             self.conn.commit()
             return self.cur.lastrowid
         except Exception as e:
