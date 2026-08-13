@@ -5,6 +5,7 @@ import time
 class GetPriceWorker(QObject):
     actual_price = pyqtSignal(object)
     finished = pyqtSignal()
+
     def __init__(self, coin, source,crypto_service: CryptoService):
         super().__init__()
         self.crypto_service = crypto_service

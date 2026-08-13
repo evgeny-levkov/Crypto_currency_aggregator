@@ -3,6 +3,7 @@ from .base_fee import BaseFeeStrategy
 
 class FeeFactory:
     fees = {}
+
     @classmethod
     def register_fee(cls, name):
         def decorator(register_class):

@@ -14,6 +14,7 @@ class CryptoViewModel(QObject):
     trigger_alert = pyqtSignal(str)
     history_data = pyqtSignal(list)
     export_res = pyqtSignal(object)
+
     def __init__(self, crypto_service: CryptoService, export_service: ExportService):
         super().__init__()
         self.get_price_thread = None

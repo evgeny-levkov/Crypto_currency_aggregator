@@ -4,6 +4,7 @@ from PyQt6.QtCore import pyqtSignal, QObject, pyqtSlot
 
 class AlertManager(QObject):
     trigger = pyqtSignal(BaseAlert, int)
+
     def __init__(self):
         super().__init__()
         self.alerts: dict[int, BaseAlert] = {}

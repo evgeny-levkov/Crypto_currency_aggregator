@@ -4,6 +4,7 @@ from ..model.coin_model import CoinModel
 
 class ExporterFactory:
     _varients_export = {}
+
     @classmethod
     def register_exporters(cls, name):
         def decorator(register_class):

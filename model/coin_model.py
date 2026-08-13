@@ -1,4 +1,4 @@
-class CoinModel():
+class CoinModel:
     def __init__(self, name, time, price, source):
         self.name = name
         self.time = time

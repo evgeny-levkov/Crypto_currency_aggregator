@@ -1,5 +1,6 @@
-class AlertFactory():
+class AlertFactory:
     _alerts = {}
+
     @classmethod
     def registry_alerts(cls, name):
         def decorator(class_name):

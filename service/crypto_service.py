@@ -5,7 +5,7 @@ from ..fees.fee_factory import FeeFactory
 from ..fees.base_fee import BaseFeeStrategy
 
 
-class CryptoService():
+class CryptoService:
     def __init__(self, crypto_repository: CryptoRepository):
         self.crypto_repository = crypto_repository
 
