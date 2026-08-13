@@ -82,5 +82,6 @@ class CryptoViewModel(QObject):
         try:
             id = self.crypto_service.add_alert(AlertModel(alert_type, coin, source, **params))
             self.alert_manager.add_alert(id, AlertFactory.give_alerts(alert_type, coin, source, **params))
+            return id
         except Exception as e:
             print(f'Ошибка добавления:{e}')

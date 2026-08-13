@@ -44,4 +44,20 @@ The goal of this project is to build a **Crypto Currency & Exchange Rate Aggrega
 ---
 
 ## Achievements & Architectural Decisions
-*(To be populated as the project progresses)*
+1. **Report Export System (Implemented strategy & factory patterns):**
+   - Created `BaseExporter` interface and concrete stateless strategies: `CsvExporter`, `JsonExporter`, `HtmlExporter`.
+   - Implemented dynamic registration-based `ExporterFactory` using decorator registration pattern.
+   - Decoupled export file I/O operations from service and UI layers.
+2. **Polymorphic Alert Caching & Persistence (Implemented OCP-compliant DB storage):**
+   - Replaced hardcoded price alert tables with a single polymorphic `alert` table in SQLite (`id`, `alert_type`, `coin`, `source`, `params` as JSON string).
+   - Designed a polymorphic DTO `AlertModel` storing specific parameters in `alert_params` dictionary.
+   - Implemented decorator-registered `AlertFactory` for dynamic instantiation of rules in memory.
+   - Synchronized CRUD operations in `CryptoViewModel` to clear triggered/manual alerts from database (`delete_alert`) and memory simultaneously, communicating via PyQt6 signals using integer primary keys.
+3. **Arbitrage Commission Strategies (Implemented Strategy + Factory patterns for profit calculations):**
+   - Created `BaseFeeStrategy` defining `calculate_buy` and `calculate_sell` contracts.
+   - Implemented concrete strategies `BinanceFee` and `CoinGekoFee` returning adjusted net prices.
+   - Designed registration-based `FeeFactory` with type-annotated lookups.
+   - Integrated optimal arbitrage calculations in `CryptoService.get_actual_price` computing both raw `spred` and net `net_spred` over all active exchanges in a single, high-performance network query loop.
+4. **Git Repository Sanitization & Configuration:**
+   - Excluded sensitive files and chat logs (`old_chat.md`) from Git tracking, purging history from GitHub using `git commit --amend` and `git push --force`.
+   - Setup project-specific `.gitignore` to prevent tracking of local SQLite databases (`*.db`) and dynamic caches.
