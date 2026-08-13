@@ -1,5 +1,5 @@
 from .base_db import BaseDb
-from ...model.сoin_model import CoinModel
+from ...model.coin_model import CoinModel
 from ...model.alert_model import AlertModel
 import sqlite3
 import json
@@ -8,9 +8,9 @@ import json
 class SqlLiteDb(BaseDb):
     def __init__(self, db):
         super().__init__(db)
-        self.connetion()
+        self.connection()
 
-    def connetion(self):
+    def connection(self):
         try:
             self.conn = sqlite3.connect(self.db)
             self.cur = self.conn.cursor()

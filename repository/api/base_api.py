@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from ...model.сoin_model import CoinModel
+from ...model.coin_model import CoinModel
 import requests
 
 

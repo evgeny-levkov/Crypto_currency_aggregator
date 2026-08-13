@@ -1,5 +1,5 @@
 from .base_exporter import BaseExporter
-from ..model.сoin_model import CoinModel
+from ..model.coin_model import CoinModel
 
 
 class ExporterFactory:

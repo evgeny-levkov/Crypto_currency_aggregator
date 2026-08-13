@@ -1,7 +1,7 @@
 from .base_repository import BaseRepository
 from .api_repository import ApiRepository
 from .db_repository import DbRepository
-from ..model.сoin_model import CoinModel
+from ..model.coin_model import CoinModel
 
 
 class CryptoRepository(BaseRepository):

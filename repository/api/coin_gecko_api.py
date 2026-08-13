@@ -1,10 +1,10 @@
 from .base_api import BaseApi
 import requests
 import datetime
-from ...model.сoin_model import CoinModel
+from ...model.coin_model import CoinModel
 
 
-class CoinGekoApi(BaseApi):
+class CoinGeckoApi(BaseApi):
     def __init__(self, mapping, end_point = 'https://api.coingecko.com/api/v3/simple/price?ids='):
         super().__init__(end_point=end_point)
         self._mapping = mapping

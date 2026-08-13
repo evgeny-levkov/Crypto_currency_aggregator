@@ -1,5 +1,5 @@
 from .base_alert import BaseAlert
-from ..model.сoin_model import CoinModel
+from ..model.coin_model import CoinModel
 import operator
 from ..alerts.alert_factory import AlertFactory
 

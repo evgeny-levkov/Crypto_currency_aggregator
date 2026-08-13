@@ -14,7 +14,6 @@ class CryptoViewModel(QObject):
     trigger_alert = pyqtSignal(str)
     history_data = pyqtSignal(list)
     export_res = pyqtSignal(object)
-
     def __init__(self, crypto_service: CryptoService, export_service: ExportService):
         super().__init__()
         self.get_price_thread = None
@@ -39,11 +38,11 @@ class CryptoViewModel(QObject):
                 print(f"Ошибка при запуске потока: {e}")
 
     def finish_get_price(self):
-            self.get_price_thread.quit()
-            self.get_price_worker.deleteLater()
-            self.get_price_thread.deleteLater()
-            self.get_price_thread = None
-            self.get_price_worker = None
+        self.get_price_thread.quit()
+        self.get_price_worker.deleteLater()
+        self.get_price_thread.deleteLater()
+        self.get_price_thread = None
+        self.get_price_worker = None
 
     def get_actual_price(self, actual_price: dict):
         self.alert_manager.triggers(actual_price)

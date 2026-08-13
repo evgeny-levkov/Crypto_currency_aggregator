@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ..model.сoin_model import CoinModel
+from ..model.coin_model import CoinModel
 
 
 class BaseExporter(ABC):

@@ -2,7 +2,7 @@ from .base_api import BaseApi
 import datetime
 import requests
 import json
-from ...model.сoin_model import CoinModel
+from ...model.coin_model import CoinModel
 
 
 class BinanceApi(BaseApi):

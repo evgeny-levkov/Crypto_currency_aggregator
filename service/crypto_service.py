@@ -1,5 +1,5 @@
 from ..repository.crypto_repository import CryptoRepository
-from ..model.сoin_model import CoinModel
+from ..model.coin_model import CoinModel
 from ..model.alert_model import AlertModel
 from ..fees.fee_factory import FeeFactory
 from ..fees.base_fee import BaseFeeStrategy
@@ -10,7 +10,6 @@ class CryptoService():
         self.crypto_repository = crypto_repository
 
     def get_actual_price(self, coin, source):
-        #словарь вида {source1:price, source2: price, spred: price}
         price_buy = {}
         price_sell = {}
         arr = {}
