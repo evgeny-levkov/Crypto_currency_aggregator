@@ -3,13 +3,14 @@ from ..model.coin_model import CoinModel
 from ..model.alert_model import AlertModel
 from ..fees.fee_factory import FeeFactory
 from ..fees.base_fee import BaseFeeStrategy
+from typing import Any
 
 
 class CryptoService:
-    def __init__(self, crypto_repository: CryptoRepository):
+    def __init__(self, crypto_repository: CryptoRepository) -> None:
         self.crypto_repository = crypto_repository
 
-    def get_actual_price(self, coin, source):
+    def get_actual_price(self, coin: str, source: list[str]) -> dict[str, Any]:
         price_buy = {}
         price_sell = {}
         arr = {}
@@ -30,14 +31,17 @@ class CryptoService:
             arr['net_spred'] = None
         return arr
 
-    def get_history_price(self, coin, limit):
+    def get_history_price(self, coin: str, limit: int) -> list[CoinModel] | None:
         return self.crypto_repository.get_history_price(coin, limit)
 
-    def get_all_alert(self):
+    def get_all_alert(self) -> list[AlertModel] | None:
         return self.crypto_repository.get_all_alert()
 
-    def add_alert(self, alert: AlertModel):
+    def add_alert(self, alert: AlertModel) -> int | None:
         return self.crypto_repository.add_alert(alert)
 
-    def delete_alert(self, id):
+    def delete_alert(self, id: int) -> bool:
         return self.crypto_repository.delete_alert(id)
+
+    def get_source(self) -> list[str]:
+        return self.crypto_repository.get_source()

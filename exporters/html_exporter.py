@@ -1,11 +1,12 @@
 from .base_exporter import BaseExporter
 from ..model.coin_model import CoinModel
 from .exporter_factory import ExporterFactory
+from typing import Any
 
 
 @ExporterFactory.register_exporters("html")
 class HtmlExporter(BaseExporter):
-    def export(self, data: list[CoinModel], filepath):
+    def export(self, data: list[CoinModel], filepath: str) -> Any:
         with open(filepath, "w", encoding="utf-8") as f:
             table_rows = '\n'.join([f'<tr><td>{coins.name}</td><td>{coins.time}</td><td>{coins.price}</td><td>{coins.source}</td></tr>'
                                     for coins in data])

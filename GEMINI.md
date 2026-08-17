@@ -64,3 +64,26 @@ The goal of this project is to build a **Crypto Currency & Exchange Rate Aggrega
 5. **API Client Refactoring (Template Method Pattern):**
    - Extracted common HTTP query execution, JSON extraction, and error handling logic from concrete API classes into the abstract base class `BaseApi`.
    - Concrete `BinanceApi` and `CoinGekoApi` now only implement URL formatting (`form_string_api`) and response parsing (`parse_data`), achieving strict SRP and clean code.
+6. **100% Strict PEP 484 Type Hinting Coverage (Completed August 14, 2026):**
+   - Fully annotated all project layers and constructor parameters (including `-> None` for `__init__` methods), ensuring strict typing alignment across models, repositories, database drivers, API clients, services, exporters, fees, worker, viewmodels, and views.
+   - Resolved syntax, circular imports, and type mismatches (such as dictionary unpackings and returned iterables).
+7. **View Decoupling & Dynamic Exchange Discovery (SOLID Refactoring - Completed August 14, 2026):**
+   - Removed hardcoded exchange lists from the View layer (`MainWindow.refresh_price`), moving the source discovery responsibility to `CryptoRepository` and `CryptoService`.
+   - ViewModel now queries active sources dynamically before starting the price worker, adhering strictly to the Dependency Inversion and Open-Closed Principles.
+   8. **UI Layout, Dynamic Alerts Panel & Custom Popup Window (Completed August 14, 2026):**
+      - Completed `MainWindow` main layout and `AlertPanel` supporting dynamic parameter dictionary parsing.
+      - Implemented custom `NotificationPopUp` with `WindowStaysOnTopHint` flag to handle real-time triggered price alerts.
+
+
+## Dynamic Response Verification (Supervisor Hook)
+To prevent "instruction drift" and enforce the Strict Socratic Mentor Mode (specifically the prohibition against providing project code or step-by-step instructions), the workspace utilizes a lifecycle hook:
+1. **Hook Configuration (`.agents/hooks.json`):**
+   - Configures a `PostInvocation` hook that calls a python script (e.g. `python3 .agents/critic_guard.py`) upon completing model generation.
+2. **Critic Script (`.agents/critic_guard.py`):**
+   - Reads the input JSON from standard input to extract the `transcriptPath`.
+   - Parses the latest response of type `PLANNER_RESPONSE` from the `transcript.jsonl` file.
+   - Evaluates the response content via a dedicated critique prompt using a model API.
+   - If the response complies, outputs an empty JSON `{}` to standard output.
+   - If the response contains violations (e.g., project-specific code snippets, direct solutions, or direct sequential steps), outputs a JSON with `"terminationBehavior": "force_continue"` and injects the critique in `ephemeralMessage` to force a rewrite.
+3. **Exclusion:** The `.agents/` folder is excluded from Git to prevent tracking local scripts and key configs.
+

@@ -2,11 +2,12 @@ from .base_exporter import BaseExporter
 from ..model.coin_model import CoinModel
 import csv
 from .exporter_factory import ExporterFactory
+from typing import Any
 
 
 @ExporterFactory.register_exporters("csv")
 class CsvExporter(BaseExporter):
-    def export(self, data: list[CoinModel], filepath):
+    def export(self, data: list[CoinModel], filepath: str) -> Any:
         with open(filepath, "w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=["name", "time", "price", "source"])
             writer.writeheader()
