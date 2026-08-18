@@ -3,7 +3,7 @@ from typing import Callable, Any
 
 
 class AlertFactory:
-    _alerts = {}
+    _alerts: dict[str, type[BaseAlert]] = {}
 
     @classmethod
     def registry_alerts(cls, name: str) -> Callable:
@@ -18,4 +18,11 @@ class AlertFactory:
             return cls._alerts[name](coin = coin, source = source, **params)
         except Exception as e:
             print(f'Нет такого алёрта: {e}')
+            return None
+    @classmethod
+    def get_alert_fields(cls, name: str) -> dict[str, Any] | None:
+        try:
+            return cls._alerts[name].get_fields()
+        except Exception as e:
+            print(f'Ошибка {e}')
             return None

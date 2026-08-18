@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QLabel, QComboBox, QPushButton
 from ..settings import MAPPING
 from ..viewmodel.crypto_viewmodel import CryptoViewModel
+from PyQt6.QtCore import pyqtSignal
 
 
 class AlertPanel(QWidget):
@@ -8,43 +9,45 @@ class AlertPanel(QWidget):
         super().__init__()
         self.viewmodel = viewmodel
         self.initialize_ui()
+        self.add_params()
 
     def initialize_ui(self) -> None:
         self.main_box = QVBoxLayout()
         self.params = []
+        self.dynamic_params = {}
         self.setLayout(self.main_box)
         #Имя алёрта - вводится руками
+        self.label_type = QLabel('Тип алёрта')
+        self.alert_type = QComboBox()
+        self.alert_type.addItem('price')
+        self.alert_type.currentTextChanged.connect(self.add_params)
         self.label_alert = QLabel('Название алёрта')
         self.alert_name = QLineEdit()
-        # Имя монеты - из выпадающего списка()
-        self.label_coin = QLabel('Монета')
+        self.coin_name_label = QLabel('Монета')
         self.coin_name = QComboBox()
-        self.coin_name.addItems(MAPPING.keys())
-        #Имя ресурса - из выпадающего списка(Binance, CoinGeko)
-        self.label_source = QLabel('Источник')
+        self.coin_name.addItems(['BTC', 'ETH', 'SOL'])
+        self.source_name_label = QLabel('Источник')
         self.source_name = QComboBox()
         self.source_name.addItems(['Binance', 'CoinGeko'])
-        #Другие параметры: имя + значение(добавление по кнопке)
-        self.label_other_params = QLabel('Другие параметры алёрта')
+        self.label_params = QLabel('Параметры алёрта:')
         self.place_new_params = QVBoxLayout()
-        self.add_params_button = QPushButton('+')
-        self.add_params_button.clicked.connect(self.add_params)
-
         self.accept_button = QPushButton('Подтвердить')
         self.accept_button.clicked.connect(self.accept)
 
+        self.main_box.addWidget(self.label_type)
+        self.main_box.addWidget(self.alert_type)
+
         self.main_box.addWidget(self.label_alert)
         self.main_box.addWidget(self.alert_name)
-        self.main_box.addWidget(QLabel())
-        self.main_box.addWidget(self.label_coin)
+
+        self.main_box.addWidget(self.coin_name_label)
         self.main_box.addWidget(self.coin_name)
-        self.main_box.addWidget(QLabel())
-        self.main_box.addWidget(self.label_source)
+
+        self.main_box.addWidget(self.source_name_label)
         self.main_box.addWidget(self.source_name)
-        self.main_box.addWidget(QLabel())
-        self.main_box.addWidget(self.label_other_params)
+
+        self.main_box.addWidget(self.label_params)
         self.main_box.addLayout(self.place_new_params)
-        self.main_box.addWidget(self.add_params_button)
         self.main_box.addWidget(self.accept_button)
 
         self.main_box.addStretch()
@@ -53,13 +56,33 @@ class AlertPanel(QWidget):
 
     def accept(self) -> None:
         par = {}
-        for i in self.params:
-            par[i[0].text()] = i[1].text()
-        self.viewmodel.add_alert(self.alert_name.text(), self.coin_name.currentText(), self.source_name.currentText(), **par)
+        for keys, values in self.dynamic_params.items():
+            if isinstance(values, QComboBox):
+                param = values.currentText()
+            elif isinstance(values, QLineEdit):
+                param = values.text()
+            par[keys] = param
+        par['user_alert_name'] = self.alert_name.text()
+        self.viewmodel.add_alert(self.alert_type.currentText(), self.coin_name.currentText(), self.source_name.currentText(), **par)
+        self.setVisible(False)
 
     def add_params(self) -> None:
-        self.name = QLineEdit()
-        self.value = QLineEdit()
-        self.place_new_params.addWidget(self.name)
-        self.place_new_params.addWidget(self.value)
-        self.params.append((self.name, self.value))
+        self.dynamic_params.clear()
+        while self.place_new_params.count():
+            item = self.place_new_params.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.setParent(None)
+        self.alert_params = self.viewmodel.get_alert_fields(str(self.alert_type.currentText()))
+        for keys in self.alert_params:
+            label = QLabel(keys)
+            if isinstance(self.alert_params[keys], list):
+                param_widget = QComboBox()
+                param_widget.addItems(self.alert_params[keys])
+            else:
+                param_widget = QLineEdit()
+            self.place_new_params.addWidget(label)
+            self.place_new_params.addWidget(param_widget)
+            self.dynamic_params[keys] = param_widget
+
+

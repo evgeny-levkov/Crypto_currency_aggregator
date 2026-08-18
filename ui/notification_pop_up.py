@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QHBoxLayout, QWidget, QVBoxLayout, QTableWidget, QComboBox, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 from PyQt6.QtCore import Qt
 
 
@@ -13,7 +13,7 @@ class NotificationPopUp(QWidget):
     def initialize_ui(self) -> None:
         self.main_layout = QVBoxLayout()
 
-        self.messege = QLabel(f'Внимание: сработал алёрт {self.alert}')
+        self.messege = QLabel(f'{self.alert}')
         self.close_button = QPushButton('Закрыть')
         self.close_button.clicked.connect(self.close)
 

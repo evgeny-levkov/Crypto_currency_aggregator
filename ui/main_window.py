@@ -3,6 +3,7 @@ from ..settings import MAPPING
 from .alerts_panel import AlertPanel
 from ..viewmodel.crypto_viewmodel import CryptoViewModel
 from ..model.coin_model import CoinModel
+from .notification_pop_up import NotificationPopUp
 
 
 class MainWindow(QMainWindow):
@@ -13,7 +14,8 @@ class MainWindow(QMainWindow):
         self.viewmodel.actual_price.connect(self.refresh_price)
         self.viewmodel.trigger_alert.connect(self.trigger_alert)
         self.viewmodel.history_data.connect(self.get_historic_data)
-        self.viewmodel.export_res.connect(self.export)
+        self.viewmodel.export_res.connect(self.finish_export)
+        self.notifications = []
 
     def initialize_ui(self) -> None:
         self.setGeometry(200, 200, 1000, 1000)
@@ -54,10 +56,10 @@ class MainWindow(QMainWindow):
         self.file_expansion = QComboBox()
         self.file_expansion.addItems(['csv', 'html', 'json'])
         self.limit = QLineEdit()
-        self.export_button = QPushButton()
-        self.refresh_price_button = QPushButton()
+        self.export_button = QPushButton('Экспортировать')
+        self.refresh_price_button = QPushButton('Обновить')
         self.export_button.clicked.connect(self.export)
-        self.refresh_price_button.clicked.connect(self.refresh_price)
+        self.refresh_price_button.clicked.connect(self.update_price_ui)
         self.button_layout.addWidget(self.limit)
         self.button_layout.addWidget(self.file_expansion)
         self.button_layout.addWidget(self.refresh_price_button)
@@ -69,20 +71,41 @@ class MainWindow(QMainWindow):
         self.alert_layout.setVisible(not self.alert_layout.isVisible())
 
     def export(self) -> None:
-        file_path, _ = QFileDialog.getSaveFileName(self, 'Сохранить файл как')
-        try:
-            self.viewmodel.export(self.file_expansion.currentText(), self.coin.currentText(), int(self.limit.text()), file_path)
-        except:
-            QMessageBox.critical(self,'Ошибка', 'Ошибка сохранения файла')
+        filepath,_ = QFileDialog.getSaveFileName(self, 'Сохранить файл как')
+        if filepath != '':
+            try:
+                self.viewmodel.export(self.file_expansion.currentText(), self.coin.currentText(), int(self.limit.text()), filepath)
+            except:
+                self.viewmodel.export(self.file_expansion.currentText(), self.coin.currentText(), 1000, filepath)
+        else:
+            pass
 
-    def refresh_price(self) -> None:
+    def finish_export(self, res: str | None) -> None:
+        if isinstance(res, str):
+            QMessageBox.information('Успех', 'Успешное сохранение файла!')
+        else:
+            QMessageBox.critical('Ошибка', 'Ошибка при сохранении файла!')
+
+    def refresh_price(self, prices: dict[str, CoinModel | float | None]) -> None:
+        my_prices = [prices[key].price for key in prices if prices[key] is not None and key not in ('spred', 'net_spred')]
+        if len(my_prices) != 0 and all(my_prices) is not None:
+            self.price.setText(str(max(my_prices)))
+            self.spred.setText(str(prices['spred']))
+
+    def update_price_ui(self) -> None:
         self.viewmodel.stop_monitoring()
         self.viewmodel.start_monitoring(self.coin.currentText())
+        try:
+            self.viewmodel.get_history_data(self.coin.currentText(), int(self.limit.text()))
+        except:
+            self.viewmodel.get_history_data(self.coin.currentText(), 1000)
 
-    def trigger_alert(self):
-        pass
+    def trigger_alert(self, mes: str) -> None:
+        notification = NotificationPopUp(mes)
+        self.notifications.append(notification)
+        notification.show()
 
-    def get_historic_data(self, data: list[CoinModel]):
+    def get_historic_data(self, data: list[CoinModel]) -> None:
         counter = 0
         self.table_widghet.setRowCount(len(data))
         for i in data:
@@ -96,3 +119,9 @@ class MainWindow(QMainWindow):
                 self.table_widghet.setItem(counter, 2, third_cell)
                 self.table_widghet.setItem(counter, 3, fourth_cell)
                 counter += 1
+
+    def closeEvent(self, a0):
+        self.viewmodel.stop_monitoring()
+        self.viewmodel = None
+        a0.accept()
+        return super().closeEvent(a0)

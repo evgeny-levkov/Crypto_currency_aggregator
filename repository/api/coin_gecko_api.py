@@ -13,5 +13,9 @@ class CoinGeckoApi(BaseApi):
     def form_string_api(self, coin: str) -> str:
         return self.end_point+self._mapping[coin]+'&vs_currencies=usd'
 
-    def parse_data(self, response: Any, coin: str) -> list[CoinModel]:
-        return [CoinModel(name=coin, time=datetime.datetime.now(), price=response[self._mapping[coin]]['usd'], source='CoinGeko')]
+    def parse_data(self, response: Any, coin: str) -> list[CoinModel] | None:
+        try:
+            return [CoinModel(name=coin, time=datetime.datetime.now(), price=response[self._mapping[coin]]['usd'], source='CoinGeko')]
+        except Exception as e:
+                    print(f'Ошибка API:{e}')
+                    return None

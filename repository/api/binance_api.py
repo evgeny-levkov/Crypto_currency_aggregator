@@ -11,7 +11,11 @@ class BinanceApi(BaseApi):
         super().__init__(end_point=end_point)
 
     def form_string_api(self, coin: str) -> str:
-        return self.end_point + coin
+        return self.end_point + coin + 'USDT'
 
-    def parse_data(self, response: Any, coin: str) -> list[CoinModel]:
-        return [CoinModel(name=response['symbol'], time=datetime.datetime.now(), price=float(response['price']), source='Binance')]
+    def parse_data(self, response: Any, coin: str) -> list[CoinModel] | None:
+        try:
+            return [CoinModel(name=response['symbol'], time=datetime.datetime.now(), price=float(response['price']), source='Binance')]
+        except Exception as e:
+            print(f'Ошибка API:{e}')
+            return None

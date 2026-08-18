@@ -10,3 +10,7 @@ class BaseAlert(ABC):
     @abstractmethod
     def get_description(self) -> str:
         pass
+
+    @classmethod
+    def get_fields(cls) -> dict[str, str | list[str]]:
+        return {}

@@ -70,9 +70,23 @@ The goal of this project is to build a **Crypto Currency & Exchange Rate Aggrega
 7. **View Decoupling & Dynamic Exchange Discovery (SOLID Refactoring - Completed August 14, 2026):**
    - Removed hardcoded exchange lists from the View layer (`MainWindow.refresh_price`), moving the source discovery responsibility to `CryptoRepository` and `CryptoService`.
    - ViewModel now queries active sources dynamically before starting the price worker, adhering strictly to the Dependency Inversion and Open-Closed Principles.
-   8. **UI Layout, Dynamic Alerts Panel & Custom Popup Window (Completed August 14, 2026):**
-      - Completed `MainWindow` main layout and `AlertPanel` supporting dynamic parameter dictionary parsing.
-      - Implemented custom `NotificationPopUp` with `WindowStaysOnTopHint` flag to handle real-time triggered price alerts.
+8. **UI Layout, Dynamic Alerts Panel & Custom Popup Window (Completed August 14, 2026):**
+   - Completed `MainWindow` main layout and `AlertPanel` supporting dynamic parameter dictionary parsing.
+   - Implemented custom `NotificationPopUp` with `WindowStaysOnTopHint` flag to handle real-time triggered price alerts.
+9. **Thread Safety, Exception Resilience & UX Improvements (Completed August 17, 2026):**
+   - Configured SQLite connection with `check_same_thread=False` and refactored database queries to create local thread-safe cursors instead of using shared class-level cursors.
+   - Refactored `CryptoViewModel.stop_monitoring()` to cleanly shut down active threads using `.quit()` and `.wait()`, preventing `QThread` warnings on app exit.
+   - Integrated `.finished.disconnect()` inside `stop_monitoring` to eliminate race conditions between previous async cleanup triggers and new threads.
+   - Handled `MainWindow.closeEvent()` to ensure safe resource cleanup upon user window closing.
+   - Enhanced API clients with error handling (returning `[]` instead of `None` on exceptions) and USDT suffix generation for Binance.
+   - Redesigned Alert Panel input to use a registered type combo box (defaulting to `'price'`), mapped custom titles to `user_alert_name`, and introduced a `**kwargs` catch-all in alert constructors to ignore metadata elements safely.
+10. **Dynamic Parameter Spec & Auto Form Generation (Completed August 18, 2026):**
+    - Refactored alert strategies (`BaseAlert` and `PriceAlert`) to expose parameter spec schemas using a declarative `@classmethod get_fields()`.
+    - Integrated a clean `get_alert_fields` bridge in `CryptoViewModel` querying the static registry.
+    - Optimized IDE syntax highlighting and autocompletion in `AlertFactory` by annotating the dynamic registry dictionary as `dict[str, type[BaseAlert]]`.
+    - Implemented a Dynamic Form Builder in `AlertPanel` that automatically clears old input widgets and renders labeled QLineEdits or QComboBoxes matching the alert's spec.
+    - Added a `self.dynamic_params` widget registry to map inputs and dynamically parse and cast values on `accept()` cleanly based on the widget type.
+    - Resolved layout hierarchy and visual order of coin, source, name, and parameter fields.
 
 
 ## Dynamic Response Verification (Supervisor Hook)

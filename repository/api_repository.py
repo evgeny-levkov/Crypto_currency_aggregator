@@ -8,7 +8,10 @@ class ApiRepository(BaseRepository):
         self.api_dict = api_dict
 
     def get_actual_price(self, coin: str, source: str) -> CoinModel | None:
-       return self.api_dict[source].get_data(coin)[-1]
+       try:
+        return self.api_dict[source].get_data(coin)[-1]
+       except:
+          return None
 
     def get_history_price(self, coin: str, limit: int =10000) -> list[CoinModel] | None:
         raise NotImplementedError

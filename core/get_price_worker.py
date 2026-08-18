@@ -19,7 +19,10 @@ class GetPriceWorker(QObject):
         while not self._stop:
             res = self.crypto_service.get_actual_price(self._coin, self._source)
             self.actual_price.emit(res)
-            time.sleep(10)
+            for i in range(100):
+                time.sleep(0.1)
+                if self._stop:
+                    break
         self.finished.emit()
 
     def stop(self) -> None:

@@ -8,7 +8,7 @@ class BaseApi(ABC):
     def __init__(self, end_point: str) -> None:
         self.end_point = end_point
 
-    def get_data(self, coin: str) -> list[CoinModel]:
+    def get_data(self, coin: str) -> list[CoinModel] | None:
         return self.parse_data(requests.get(self.form_string_api(coin)).json(), coin)
 
     @abstractmethod
@@ -16,5 +16,5 @@ class BaseApi(ABC):
         pass
 
     @abstractmethod
-    def parse_data(self, response: Any, coin: str) -> list[CoinModel]:
+    def parse_data(self, response: Any, coin: str) -> list[CoinModel] | None:
         pass

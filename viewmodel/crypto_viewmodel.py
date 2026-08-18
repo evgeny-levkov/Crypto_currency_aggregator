@@ -9,6 +9,7 @@ from ..alerts.base_alert import BaseAlert
 from ..alerts.alert_factory import AlertFactory
 from ..model.alert_model import AlertModel
 from ..model.coin_model import CoinModel
+from ..core.get_price_worker import GetPriceWorker
 from typing import Any
 
 
@@ -26,6 +27,7 @@ class CryptoViewModel(QObject):
         self.alert_manager = AlertManager()
         self.alert_manager.trigger.connect(self.alert)
         self.member_alerts = self.crypto_service.get_all_alert()
+        self.get_price_worker = None
         self.load_alerts()
 
     def start_monitoring(self, coin: str) -> None:
@@ -43,11 +45,12 @@ class CryptoViewModel(QObject):
                 print(f"Ошибка при запуске потока: {e}")
 
     def finish_get_price(self) -> None:
-        self.get_price_thread.quit()
-        self.get_price_worker.deleteLater()
-        self.get_price_thread.deleteLater()
-        self.get_price_thread = None
-        self.get_price_worker = None
+         if self.get_price_worker is not None:
+            self.get_price_thread.quit()
+            self.get_price_worker.deleteLater()
+            self.get_price_thread.deleteLater()
+            self.get_price_thread = None
+            self.get_price_worker = None
 
     def get_actual_price(self, actual_price: dict[str, CoinModel | float | None]) -> None:
         self.alert_manager.triggers(actual_price)
@@ -55,7 +58,18 @@ class CryptoViewModel(QObject):
 
     def stop_monitoring(self) -> None:
         if self.get_price_worker is not None:
+            try:
+                self.get_price_worker.finished.disconnect()
+            except Exception as e:
+                print(f'Ошибка{e}')
             self.get_price_worker.stop()
+            self.get_price_thread.quit()
+            self.get_price_thread.wait()
+            self.get_price_worker.deleteLater()
+            self.get_price_thread.deleteLater()
+        self.get_price_thread = None
+        self.get_price_worker = None
+
 
     def alert(self, alert_mes: BaseAlert, id: int) -> None:
         self.trigger_alert.emit(alert_mes.get_description())
@@ -90,3 +104,6 @@ class CryptoViewModel(QObject):
             return id
         except Exception as e:
             print(f'Ошибка добавления:{e}')
+
+    def get_alert_fields(self, name: str) -> dict[str, Any] | None:
+        return AlertFactory.get_alert_fields(name)
