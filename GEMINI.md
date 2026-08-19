@@ -80,6 +80,7 @@ The goal of this project is to build a **Crypto Currency & Exchange Rate Aggrega
    - Handled `MainWindow.closeEvent()` to ensure safe resource cleanup upon user window closing.
    - Enhanced API clients with error handling (returning `[]` instead of `None` on exceptions) and USDT suffix generation for Binance.
    - Redesigned Alert Panel input to use a registered type combo box (defaulting to `'price'`), mapped custom titles to `user_alert_name`, and introduced a `**kwargs` catch-all in alert constructors to ignore metadata elements safely.
+   - Integrated explicit `float` conversion inside `PriceAlert` to prevent type mismatches.
 10. **Dynamic Parameter Spec & Auto Form Generation (Completed August 18, 2026):**
     - Refactored alert strategies (`BaseAlert` and `PriceAlert`) to expose parameter spec schemas using a declarative `@classmethod get_fields()`.
     - Integrated a clean `get_alert_fields` bridge in `CryptoViewModel` querying the static registry.

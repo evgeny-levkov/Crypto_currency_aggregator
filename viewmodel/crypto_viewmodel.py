@@ -15,7 +15,7 @@ from typing import Any
 
 class CryptoViewModel(QObject):
     actual_price = pyqtSignal(dict)
-    trigger_alert = pyqtSignal(str)
+    trigger_alert = pyqtSignal(object)
     history_data = pyqtSignal(list)
     export_res = pyqtSignal(object)
 
@@ -71,8 +71,8 @@ class CryptoViewModel(QObject):
         self.get_price_worker = None
 
 
-    def alert(self, alert_mes: BaseAlert, id: int) -> None:
-        self.trigger_alert.emit(alert_mes.get_description())
+    def alert(self, alert: BaseAlert, id: int) -> None:
+        self.trigger_alert.emit([alert.alert_name, alert.get_description()])
         self.crypto_service.delete_alert(id)
 
     def get_history_data(self, coin: str, limit: int) -> None:
@@ -107,3 +107,6 @@ class CryptoViewModel(QObject):
 
     def get_alert_fields(self, name: str) -> dict[str, Any] | None:
         return AlertFactory.get_alert_fields(name)
+
+    def get_alerts(self):
+        return AlertFactory()

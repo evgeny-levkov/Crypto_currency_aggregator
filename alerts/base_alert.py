@@ -3,6 +3,9 @@ from ..model.coin_model import CoinModel
 
 
 class BaseAlert(ABC):
+    def __init__(self, alert_name: str = "Без имени") -> None:
+        self.alert_name = alert_name
+
     @abstractmethod
     def check(self, price: dict[str, CoinModel | float | None]) -> bool:
         pass

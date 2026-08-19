@@ -8,6 +8,7 @@ import inspect
 @AlertFactory.registry_alerts("price")
 class PriceAlert(BaseAlert):
     def __init__(self, alert_price: float, coin: str, source: str, opr: str, **kwargs) -> None:
+        super().__init__(kwargs.get('user_alert_name', 'Без имени'))
         self._operators = {'>': operator.gt, '<':operator.lt, '=': operator.eq}
         self.alert_price = float(alert_price)
         self.coin = coin

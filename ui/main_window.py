@@ -4,6 +4,7 @@ from .alerts_panel import AlertPanel
 from ..viewmodel.crypto_viewmodel import CryptoViewModel
 from ..model.coin_model import CoinModel
 from .notification_pop_up import NotificationPopUp
+from typing import Any
 
 
 class MainWindow(QMainWindow):
@@ -87,8 +88,8 @@ class MainWindow(QMainWindow):
             QMessageBox.critical('Ошибка', 'Ошибка при сохранении файла!')
 
     def refresh_price(self, prices: dict[str, CoinModel | float | None]) -> None:
-        my_prices = [prices[key].price for key in prices if prices[key] is not None and key not in ('spred', 'net_spred')]
-        if len(my_prices) != 0 and all(my_prices) is not None:
+        my_prices = [prices[key].price for key in prices if key not in ('spred', 'net_spred') and prices[key] is not None and prices[key].price is not None]
+        if len(my_prices) != 0 and all(my_prices):
             self.price.setText(str(max(my_prices)))
             self.spred.setText(str(prices['spred']))
 
@@ -100,7 +101,7 @@ class MainWindow(QMainWindow):
         except:
             self.viewmodel.get_history_data(self.coin.currentText(), 1000)
 
-    def trigger_alert(self, mes: str) -> None:
+    def trigger_alert(self, mes: Any) -> None:
         notification = NotificationPopUp(mes)
         self.notifications.append(notification)
         notification.show()
